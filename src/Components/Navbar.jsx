@@ -1,5 +1,6 @@
 import { useState } from "react"
-import { animated, useSpring, useTransition } from "@react-spring/web"
+import { animated, useTransition } from "@react-spring/web"
+import { Link } from "react-router-dom";
 
 function Navbar(){
     const [isNavOpen, setIsNavOpen] = useState(false)
@@ -44,9 +45,16 @@ function Navbar(){
                         <button onClick={() => setIsNavOpen(false)}>
                             <i className="fa-solid fa-bars text-xl"></i>
                         </button>
-                        <ul className="mt-5 space-y-5">
-                            <li>Dashboard</li>
-                            <li>Expenses</li>
+                        <ul>
+                            <Link to='/Expense-Tracker/'>
+                                <li className="pointer mt-4">Homepage</li>
+                            </Link>
+                            <Link to='/Expense-Tracker/dashboard'>
+                                <li className="pointer mt-4">Dashboard</li>
+                            </Link>
+                            <Link to='/Expense-Tracker/transactions'>
+                                <li className="pointer mt-4">Transactions</li>
+                            </Link>
                         </ul>
                         </animated.nav>
                     )

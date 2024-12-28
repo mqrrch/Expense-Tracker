@@ -4,7 +4,7 @@ import TotalExpenses from "./Total Expenses/TotalExpenses"
 
 function Dashboard() {
     return (
-        <div className="dashboard absolute mt-6 w-fit h-5/6">
+        <div className="absolute mt-6 w-fit h-5/6">
             <DashboardCounts />
             <TotalExpenses />
             <BalanceAndIncome />

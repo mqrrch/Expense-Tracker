@@ -7,6 +7,11 @@ const data = [
   { id: 'Transportation', value: 200, label: 'Transportation' },
   { id: 'Utilities', value: 150, label: 'Utilities' },
   { id: 'Other', value: 100, label: 'Other' },
+  { id: 'a', value: 100, label: 'a' },
+  { id: 'b', value: 1000, label: 'b' },
+  { id: 'c', value: 2500, label: 'c' },
+  { id: 'd', value: 500, label: 'd' },
+  { id: 'e', value: 700, label: 'e' },
 ];
 
 const DonutChart = () => {

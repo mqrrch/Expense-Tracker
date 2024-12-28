@@ -50,10 +50,6 @@ function IncomeExpense(){
           modifiers: [["darker", 1.6]],
         }}
         role="application"
-        ariaLabel="Nivo bar chart demo"
-        barAriaLabel={(e) =>
-          `${e.id}: ${e.formattedValue} in month: ${e.indexValue}`
-        }
         theme={{
             axis: {
                 ticks: {
