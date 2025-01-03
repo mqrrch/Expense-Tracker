@@ -7,14 +7,22 @@ function TransactionsPage(){
     const [transaction, setTransaction] = useState({
         id: '',
         name: '',
+        category: '',
         date: '',
         outcome: false,
         cost: '',
         note: '',
-        isRecurring: false,
         recurringTime: ''
     })
-    const [transactionList, setTransactionList] = useState([])
+    const [transactionList, setTransactionList] = useState(() => {
+        const localValue = localStorage.getItem("TRANSACTION_LIST");
+        if (localValue === null) return [];
+        return JSON.parse(localValue);
+    })
+
+    useEffect(() => {
+        localStorage.setItem("TRANSACTION_LIST", JSON.stringify(transactionList))
+      }, [transactionList])
 
     useEffect(() => {
         // The if statement is to check if its valid or not (only name because every input is required)
@@ -28,14 +36,34 @@ function TransactionsPage(){
             return currentList.filter((transaction) => transaction.id !== id)
         })
     }
+
+    function editTransaction(id, newName, newCategory, newDate, newOutcome, newCost, newNote, newRecurringTime){
+        setTransactionList(currentList => {
+            return currentList.map(transaction => {
+                if (transaction.id === id){
+                    return {...transaction, 
+                        name: newName, 
+                        category: newCategory,
+                        date: newDate, 
+                        outcome: newOutcome, 
+                        cost: newCost, 
+                        note: newNote, 
+                        recurringTime: newRecurringTime}
+                }
+                return transaction
+            })
+        })
+    }
     
     return (
-        <div className="mt-6 mb-5 w-5/6">
-            <div className="flex justify-around">
+        <div className="mt-6 pb-6 w-10/12 min-h-fit overflow-hidden">
+            <div className="add-transaction-container flex gap-16">
                 <AddOneTime setTransaction={setTransaction} />
                 <AddRecurring setTransaction={setTransaction} />
             </div>
-            <TransactionsHistory transactionList={transactionList} removeTransaction={removeTransaction} />
+            <TransactionsHistory transactionList={transactionList} 
+            removeTransaction={removeTransaction} 
+            editTransaction={editTransaction} />
         </div>
     )
 }

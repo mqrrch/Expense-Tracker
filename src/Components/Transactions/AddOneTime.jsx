@@ -28,6 +28,11 @@ function AddOneTime({ setTransaction }){
     function handleSubmit(e){
         e.preventDefault()
 
+        if (otName.trim().length === 0){
+            alert("Please enter a name!")
+            return;
+        }
+
         setTransaction({
             id: crypto.randomUUID(),
             name: otName,
@@ -36,7 +41,6 @@ function AddOneTime({ setTransaction }){
             cost: otCost,
             date: otDate,
             note: otNote,
-            isRecurring: false,
             recurringTime: ''
         })
 
@@ -49,7 +53,7 @@ function AddOneTime({ setTransaction }){
     }
 
     return (
-        <form className="add-one-time-form flex flex-col w-2/5 p-4" onSubmit={handleSubmit}>
+        <form className="add-one-time-form flex flex-col p-4" onSubmit={handleSubmit}>
             <p className="text-center">One Time Transaction</p>
             <label className="mt-4" htmlFor="one-time-name">Enter Name</label>
             <input id="one-time-name" name="one-time-name" placeholder="Insert Name" maxLength={30} onChange={handleNameChange} value={otName} required />
@@ -67,19 +71,19 @@ function AddOneTime({ setTransaction }){
                 <option value="savings">Savings</option>
                 <option value="others">Others</option>
             </select>
-            <label className="mt-4 flex" htmlFor="one-time-cost">
+            <label htmlFor="one-time-cost" className="mt-2 flex gap-1">
                 Enter Cost
-                    {otOutcome ? (
-                        <div className="ml-5 space-x-2">
-                            <a className="one-time-mode-btn text-sm px-2 cursor-pointer" onClick={() => setOtOutcome(false)}>Income</a>
-                            <a className="mode-active one-time-mode-btn text-sm px-2 cursor-pointer" onClick={() => setOtOutcome(true)}>Outcome</a>
-                        </div>
-                    ) : (
-                        <div className="ml-5 space-x-2">
-                            <a className="mode-active one-time-mode-btn text-sm px-2 cursor-pointer" onClick={() => setOtOutcome(false)}>Income</a>
-                            <a className="one-time-mode-btn text-sm px-2 cursor-pointer" onClick={() => setOtOutcome(true)}>Outcome</a>
-                        </div>
-                    )}
+                {otOutcome ? (
+                    <div className="ml-1 space-x-1">
+                        <button type="button" className="add-transaction-mode-btn text-sm w-5 cursor-pointer" onClick={() => setOtOutcome(false)} title="Income">I</button>
+                        <button type="button" className="add-transaction-mode-btn mode-active text-sm w-5 cursor-pointer" onClick={() => setOtOutcome(true)} title="Outcome">O</button>
+                    </div>
+                ) : (
+                    <div className="ml-1 space-x-1">
+                        <button type="button" className="add-transaction-mode-btn mode-active text-sm w-5 cursor-pointer" onClick={() => setOtOutcome(false)} title="Income">I</button>
+                        <button type="button" className="add-transaction-mode-btn text-sm w-5 cursor-pointer" onClick={() => setOtOutcome(true)} title="Outcome">O</button>
+                    </div>
+                )}
             </label>
             <input type="number" id="one-time-cost" name="one-time-cost" placeholder="Insert cost" onChange={handleCostChange} value={otCost} required />
             <label className="mt-4" htmlFor="one-time-date">Enter Date</label>

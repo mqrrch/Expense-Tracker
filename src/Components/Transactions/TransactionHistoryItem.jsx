@@ -9,47 +9,54 @@ function TransactionHistoryItem({
     outcome,
     cost,
     note,
-    isRecurring,
     recurringTime,
     removeTransaction,
+    editTransaction,
 }){
 
     const [isViewMoreOpen, setIsViewMoreOpen] = useState(false)
-    const [isOutcome, setIsOutcome] = useState(false)
 
-    console.log(id)
+    function NumberFormatter(num) {
+        parseFloat(num);
+        if (num >= 1_000_000_000) return (num / 1_000_000_000).toFixed(1).replace(/\.0$/, '') + 'B';
+        if (num >= 1_000_000) return (num / 1_000_000).toFixed(1).replace(/\.0$/, '') + 'M';
+        if (num >= 1_000) return (num / 1_000).toFixed(1).replace(/\.0$/, '') + 'k';
+        return num.toString();
+    }
+
+    function capitalizeFirstLetter(word) {
+        return word.charAt(0).toUpperCase() + word.slice(1);
+    }
 
     return (
-        <div className="flex justify-between mt-2 mx-4">
-            <p>{name}</p>
-            <div className="flex">
-                <p className="w-56 text-center">{date}</p>
+        <div className="transaction-history-item flex mb-2 px-3 pt-2">
+            <p className="transaction-history-name min-w-48 max-w-48 whitespace-nowrap overflow-hidden overflow-ellipsis">{name}</p>
+            <div className="transaction-history-btn-container flex w-full ml-32">
+                <p className="transaction-history-category w-1/3">{capitalizeFirstLetter(category)}</p>
+                <p className="transaction-history-date w-1/3">{date}</p>
                 {outcome ? (
-                    <p className="w-48 text-red-500">-${cost}</p>
+                    <p className="transaction-history-cost text-red-500 w-1/3" title={cost}>-${NumberFormatter(cost)}</p>
                 ) : (
-                    <p className="w-48 text-green-500">+${cost}</p>
+                    <p className="transaction-history-cost text-green-500 w-1/3" title={cost}>+${NumberFormatter(cost)}</p>
                 )}
-
-                <button className="text-center mr-5" onClick={() => setIsViewMoreOpen(true)}>
+                <button className="transaction-history-view-more-btn" onClick={() => setIsViewMoreOpen(true)}>
                     <i className="fa-solid fa-ellipsis"></i>
                 </button>
-
-                <ViewMoreTransaction id={id}
-                name={name}
-                category={category}
-                date={date}
-                outcome={outcome}
-                cost={cost}
-                note={note}
-                isRecurring={isRecurring}
-                recurringTime={recurringTime}
-                isViewMoreOpen={isViewMoreOpen}
-                setIsViewMoreOpen={setIsViewMoreOpen}
-                isOutcome={isOutcome}
-                setIsOutcome={setIsOutcome}
-                removeTransaction={removeTransaction} />
-                
             </div>
+
+            <ViewMoreTransaction id={id}
+            name={name.trim()}
+            category={category}
+            date={date}
+            outcome={outcome}
+            cost={cost}
+            note={note}
+            recurringTime={recurringTime}
+            isViewMoreOpen={isViewMoreOpen}
+            setIsViewMoreOpen={setIsViewMoreOpen}
+            removeTransaction={removeTransaction}
+            editTransaction={editTransaction} />
+
         </div>
     )
 }

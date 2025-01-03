@@ -53,7 +53,7 @@ body{
 .add-recurring-form,
 .transactions-history-container{
     background-color: aliceblue;
-    border: 2px solid rgb(164, 164, 164);
+    border: 2px solid rgb(138, 138, 138);
     border-radius: 5px;
 }
 
@@ -77,7 +77,7 @@ body{
 
 .add-one-time-form button,
 .add-recurring-form button,
-.one-time-mode-btn,
+.add-transaction-mode-btn,
 .view-more-mode-btn{
     border: 2px solid rgb(164, 164, 164);
     border-radius: 5px;
@@ -86,7 +86,7 @@ body{
 
 .add-one-time-form button:hover,
 .add-recurring-form button:hover,
-.one-time-mode-btn:hover,
+.add-transaction-mode-btn:hover,
 .view-more-mode-btn:hover{
     background-color: rgba(164, 164, 164, 0.5);
     border-radius: 5px;
@@ -106,4 +106,147 @@ body{
 .view-more-container textarea{
     border: 2px solid rgb(164, 164, 164);
     border-radius: 5px;
+}
+
+.transaction-history-item{
+    border-top: 2px solid rgb(164, 164, 164);
+}
+
+.transaction-history-item:nth-child(2){
+    border: none;
+}
+
+.transaction-history-header{
+    border-bottom: 2px solid rgb(164, 164, 164);
+}
+
+/* width */
+::-webkit-scrollbar {
+width: 6px;
+}
+
+/* Track */
+::-webkit-scrollbar-track {
+background: #dfdfdf;
+}
+
+/* Handle */
+::-webkit-scrollbar-thumb {
+background: #888;
+border-radius: 10px;
+}
+
+/* Handle on hover */
+::-webkit-scrollbar-thumb:hover {
+background: #555;
+}
+
+.add-one-time-form,
+.add-recurring-form{
+    width: 90%;
+}
+
+@media only screen and (max-width: 1030px){
+    .add-one-time-form,
+    .add-recurring-form{
+        width: 90%;
+    }
+    
+    .view-more-cdrc-container{
+        flex-direction: column;
+        gap: 0;
+    }
+
+    .view-more-container{
+        overflow-y: scroll;
+        width: 65%;
+    }
+
+    .view-more-category-date,
+    .view-more-rectime-cost{
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 1000px){
+    .transaction-history-date{
+        display: none;
+    }
+
+    .transaction-history-category{
+        width: 50%;
+    }
+
+    .transaction-history-cost{
+        width: 50%;
+    }
+}
+
+@media only screen and (max-width: 860px){
+    .add-transaction-container{
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+        gap: 2rem;
+    }
+
+    .transaction-history-category{
+        display: none;
+    }
+    
+    .transaction-history-cost{
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 660px){
+    .transaction-history-cost{
+        display: none;
+    }
+    
+    .transaction-history-btn-container{
+        width: 100%;
+        justify-content: flex-end;
+        margin-left: 0;
+    }
+    
+}
+
+@media only screen and (max-width: 560px){
+    .view-more-btn-container{
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .view-more-edit-save-container{
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+    }
+    
+    .view-more-remove-btn,
+    .view-more-edit-btn,
+    .view-more-save-btn{
+        width: 100%;
+    }
+    
+    .view-more-save-btn{
+        margin-left: 0;
+    }
+
+    .rec-time-date-container{
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .rec-time-container,
+    .rec-date-container{
+        width: 100%;
+    }
+}
+
+@media only screen and (max-width: 430px){
+    .view-more-container{
+        width: 85%;
+    }
 }
