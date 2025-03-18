@@ -1,0 +1,28 @@
+#menu{
+    transition: all 0.5s ease-in-out;
+}
+#menu-content{
+    transition: all 0.5s ease-in-out;
+}
+.menu-btn{
+    transition: all 0.3s ease-out;
+}
+.menu-btn-line{
+    width: 18px;
+    height: 2px;
+    margin: 0 0 4px 0;
+    background: #e6e6e6;
+    transition: all 0.3s ease-out;
+}
+.menu-btn-line:nth-child(3){
+    margin: 0;
+}
+.menu-btn.open .menu-btn-line:nth-child(1) {
+    transform: translateY(6px) rotate(45deg);
+}
+.menu-btn.open .menu-btn-line:nth-child(2) {
+    opacity: 0;
+}
+.menu-btn.open .menu-btn-line:nth-child(3) {
+    transform: translateY(-6px) rotate(-45deg);
+}
