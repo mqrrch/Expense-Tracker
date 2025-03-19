@@ -6,9 +6,9 @@ export default function Menu(){
     const navigate = useNavigate();
 
     return (
-        <div className="fixed top-0 left-0 z-[1]">
+        <>
             <button 
-                className={`menu-btn fixed top-0 left-0 p-5 cursor-pointer z-[2] outline-none ${isMenuOpen ? "open" : ""}`} 
+                className={`menu-btn cursor-pointer z-[2] outline-none ${isMenuOpen ? "open" : ""}`} 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
                     <div className="menu-btn-line"></div>
@@ -29,6 +29,6 @@ export default function Menu(){
                     <li>Hi</li>
                 </ul>
             </div>
-        </div>
+        </>
     )
 }
