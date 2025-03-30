@@ -17,8 +17,8 @@ export default function Navbar(){
     }, [])
 
     return (
-        <div className={`fixed top-0 left-0 z-10 p-5 py-4 w-full transition-colors duration-300 ${isScrolled && 'bg-[#000]'}`}>
+        <nav className={`fixed flex z-10 w-full transition-colors duration-300 ${isScrolled && 'bg-[#000]'}`}>
             <Menu />
-        </div>
+        </nav>
     )
 }

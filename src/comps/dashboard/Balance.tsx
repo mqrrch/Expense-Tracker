@@ -33,6 +33,7 @@ export default function Balance(){
                 <ResponsiveContainer width='100%' height='100%'>
                     <LineChart
                         data={data}
+                        margin={{ top: 15, bottom: 0, right: 15, left: 15 }}
                     >
                         <CartesianGrid strokeDasharray='5 5' />
                         <XAxis dataKey='month' fontSize={12} />
