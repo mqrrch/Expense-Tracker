@@ -11,7 +11,7 @@ export default function ExpensesHistoryItem({ name, cost, type, date, note }: Ex
 
     return(
         <div className="flex justify-between text-gray-300">
-            <p>{name}</p>
+            <p className="w-[12ch] truncate">{name}</p>
             <p>${NumberFormatter(parseFloat(cost))}</p>
         </div>
     )

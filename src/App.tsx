@@ -2,18 +2,18 @@ import { Route, Routes } from "react-router-dom";
 import './App.css'
 import MainLayout from "./comps/MainLayout";
 import DashboardPage from "./comps/dashboard/DashboardPage";
-import ExpensesPage from "./comps/expenses/ExpensesPage";
 import AuthTemplate from "./comps/auth/AuthTemplate";
 import { useDispatch } from "react-redux";
 import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { setUser, clearUser } from "./features/userSlice";
-import IncomePage from "./comps/income/IncomePage";
 import { doc, getDoc, setDoc } from "firebase/firestore";
+import TransactionsPage from "./comps/transactions/TransactionsPage";
+import { AppDispatch } from "./store";
 
 export default function App() {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   // Listen for changes in user auth
   useEffect(() => {
@@ -60,8 +60,7 @@ export default function App() {
 
       <Route path='/' element={<MainLayout />}>
         <Route index element={<DashboardPage />}></Route>
-        <Route path='/expenses' element={<ExpensesPage />}></Route>
-        <Route path='/income' element={<IncomePage />}></Route>
+        <Route path='/transactions' element={<TransactionsPage />}></Route>
       </Route>
     </Routes>
   )

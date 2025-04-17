@@ -29,19 +29,6 @@ export const expensesSlice = createSlice({
             state.expenses = action.payload;
         }
     },
-    extraReducers: (builder) => {
-        builder
-            .addCase(addExpenseItemAsync.pending, (state) => {
-                state.loading = true;
-            })
-            .addCase(addExpenseItemAsync.rejected, (state, action) => {
-                state.loading = false;
-                state.error = String(action.payload);
-            })
-            .addCase(addExpenseItemAsync.fulfilled, (state) => {
-                state.loading = false;
-            })
-    }
 })
 
 export const { setExpenses } = expensesSlice.actions;

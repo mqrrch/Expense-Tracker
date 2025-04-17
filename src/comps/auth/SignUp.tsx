@@ -9,6 +9,7 @@ export default function SignUp(){
     const [email, setEmail] = useState<string>('');
     const [password, setPassword] = useState<string>('');
     const [hidePassword, setHidePassword] = useState<boolean>(true);
+    const [displayName, setDisplayName] = useState<string>('');
     const dispatch = useDispatch();
     const navigate = useNavigate();
 
@@ -19,7 +20,7 @@ export default function SignUp(){
             const user = userCredential.user;
             dispatch(setUser({
                 uid: user.uid,
-                displayName: user.displayName,
+                displayName: displayName,
                 email: user.email,
                 photoUrl: user.photoURL,
             }));
@@ -35,6 +36,15 @@ export default function SignUp(){
             onSubmit={handleSubmit}
         >
             <h2 className="text-[20px] text-center">Sign Up</h2>
+            <input
+                className="p-1 pl-2 border-1 border-[#222] rounded-lg outline-none"
+                name="sign-up-display-name"
+                id="sign-up-display-name"
+                placeholder="Display name"
+                value={displayName}
+                onChange={(e: React.ChangeEvent<HTMLInputElement>) => setDisplayName(e.currentTarget.value)}
+                required
+            ></input>
             <input
                 className="p-1 pl-2 border-1 border-[#222] rounded-lg outline-none"   
                 type="email"

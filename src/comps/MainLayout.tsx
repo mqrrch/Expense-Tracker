@@ -1,21 +1,23 @@
 import { Outlet } from "react-router-dom";
-import Navbar from "../Navbar";
+import Navbar from "./Navbar";
 import useFirestoreQuery from "../hooks/useFirestoreQuery";
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../store";
-import { setExpenses } from "../features/expensesSlice";
+import { setTransactions } from "../features/transactionsSlice";
+import { orderBy } from "firebase/firestore";
 
 export default function MainLayout(){
     const dispatch = useDispatch<AppDispatch>();
 
     useFirestoreQuery({
-        collectionName: 'expenses',
+        collectionName: 'transactions',
+        conditions: [orderBy('date', 'asc')],
         onDataReceived: (docs) => {
-            const expenseItems = docs.map((doc) => ({ ...doc.data(), id: doc.id }))
-            dispatch(setExpenses(expenseItems));
+            const transactionItems = docs.map((doc) => ({ ...doc.data(), id: doc.id }))
+            dispatch(setTransactions(transactionItems));
         },
         onError: (error) => {
-            console.log(error)
+            console.error(error)
         },
         dependencies: []
     })
@@ -23,8 +25,8 @@ export default function MainLayout(){
     return (
         <>
             <div className="fixed top-0 left-0 w-full h-screen bg-[#111] z-[-2]"></div>
-                <Navbar />
-            <div className="p-4 pt-12 overflow-hidden">
+            <Navbar />
+            <div className="p-4 pt-14 overflow-hidden">
                 <Outlet />
             </div>
         </>

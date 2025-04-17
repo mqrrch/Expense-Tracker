@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addExpenseItemAsync } from "../../features/expensesAsyncThunks";
 import { AppDispatch } from "../../store";
+import { useReduxSelector } from "../../hooks/useReduxSelector";
 
 export default function AddExpense(){
     const [expenseName, setExpenseName] = useState<string>('');
@@ -10,6 +11,7 @@ export default function AddExpense(){
     const [expenseNote, setExpenseNote] = useState<string>('');
     const [isDropdownOpen, setIsDropdownOpen] = useState<boolean>(false);
     const [selectedType, setSelectedType] = useState<string>('One time');
+    const isLoading = useReduxSelector(state => state.expenses.loading);
     const dropdownRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch<AppDispatch>();
 
@@ -68,7 +70,7 @@ export default function AddExpense(){
             <p className="px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Add Expense</p>
             <form 
                 onSubmit={handleSubmit}
-                className="p-3 flex flex-col gap-3"
+                className={`p-3 flex flex-col gap-3 ${isLoading && 'opacity-50 cursor-not-allowed'}`}
             >
                 <input 
                     className="px-2 p-1 border-1 border-[#222] rounded-lg outline-none"
@@ -77,26 +79,29 @@ export default function AddExpense(){
                     placeholder="Expense name.."
                     value={expenseName}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpenseName(e.currentTarget.value)}
+                    disabled={isLoading}
                     required
                 ></input>
                 <input 
-                    className="px-2 p-1 rounded-lg border-1 border-[#222] outline-none"
+                    className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${isLoading && 'cursor-not-allowed'}`}
                     type="number"
                     name="expense-cost"
                     id="expense-cost"
                     value={expenseCost}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpenseCost(e.currentTarget.value)}
                     placeholder="Cost"
+                    disabled={isLoading}
                     required
                 ></input>
                 <div className="flex flex-col gap-3">
                     <input 
-                        className="px-2 p-1 rounded-lg border-1 border-[#222] outline-none"
+                        className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
                         type="date"
                         name="expense-date"
                         id="expense-date"
                         value={expenseDate}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setExpenseDate(e.currentTarget.value)}
+                        disabled={isLoading}
                         required
                     ></input>
                     {/* Custom dropdown */}
@@ -104,7 +109,8 @@ export default function AddExpense(){
                         <button
                             type="button"
                             onClick={() => setIsDropdownOpen(!isDropdownOpen)}
-                            className="flex justify-between items-center w-full rounded-lg p-1 px-2 pr-3 select-none border-1 border-[#222] outline-none cursor-pointer"
+                            className={`flex justify-between items-center w-full rounded-lg p-1 px-2 pr-3 select-none border-1 border-[#222] outline-none ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            disabled={isLoading}
                         >
                             {selectedType}
                             <div className={`border-r-2 border-b-2 p-1 ${isDropdownOpen ? 'rotate-[-135deg] mb-[-3px]' : 'rotate-45 mb-[3px]'}`}></div>
@@ -128,17 +134,19 @@ export default function AddExpense(){
                     </div>
                 </div>
                 <textarea
-                    className="resize-none border-1 border-[#222] rounded-lg p-2 text-[14px] outline-none"
+                    className={`resize-none border-1 border-[#222] rounded-lg p-2 text-[14px] outline-none ${isLoading && 'cursor-not-allowed'}`}
                     id="expense-note"
                     name="expense-note"
                     rows={3}
                     value={expenseNote}
                     onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => setExpenseNote(e.currentTarget.value)}
                     placeholder="Add a note..."
+                    disabled={isLoading}
                 ></textarea>
                 <button 
                     type="submit" 
-                    className="cursor-pointer p-2 border-1 border-[#4a4a4a] rounded-xl hover:bg-[#222] transition-colors duration-300"
+                    className={`p-2 border-1 border-[#4a4a4a] rounded-xl hover:bg-[#222] transition-colors duration-300 ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                    disabled={isLoading}
                 >
                     Add Expense
                 </button>

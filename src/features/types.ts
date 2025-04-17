@@ -9,11 +9,12 @@ export interface LoadingTypes{
     loadingCounter: number;
 }
 
-export interface ExpenseItemTypes{
+export interface TransactionItemTypes{
     id?: string;
-    name: string;
-    cost: string;
     type: string;
+    name: string;
+    cost: number;
+    category: string;
+    time: string;
     date: string;
-    note?: string;
 }

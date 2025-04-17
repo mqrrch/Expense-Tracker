@@ -1,8 +1,8 @@
 import { useState } from "react"
 import { useNavigate } from "react-router-dom"
-import { useReduxSelector } from "./hooks/useReduxSelector";
+import { useReduxSelector } from "../hooks/useReduxSelector";
 import { signOut } from "firebase/auth";
-import { auth } from "./firebase";
+import { auth } from "../firebase";
 
 export default function Menu(){
     const [isMenuOpen, setIsMenuOpen] = useState<boolean>(false);
@@ -16,8 +16,7 @@ export default function Menu(){
 
     const menuContent: MenuContent[] = [
         { name: 'Dashboard', link: '/' },
-        { name: 'Expenses', link: '/expenses' },
-        { name: 'Income', link: '/income' },
+        { name: 'Transactions', link: '/transactions' },
     ]
 
     const changePage = (link: string) => {
@@ -42,7 +41,7 @@ export default function Menu(){
     return (
         <>
             <button 
-                className={`menu-btn p-5 cursor-pointer z-[50] outline-none ${isMenuOpen ? "open" : ""}`} 
+                className={`menu-btn m-5 cursor-pointer z-60 outline-none ${isMenuOpen ? "open" : ""}`} 
                 onClick={() => setIsMenuOpen(!isMenuOpen)}
             >
                     <div className="menu-btn-line"></div>
@@ -52,7 +51,7 @@ export default function Menu(){
             <div 
                 id="menu-overlay" 
                 onClick={() => setIsMenuOpen(false)} 
-                className={`fixed top-0 left-0 h-screen w-full bg-black transition-opacity duration-500 z-[30] ${isMenuOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`}
+                className={`fixed top-0 left-0 h-screen w-full bg-black transition-opacity duration-500 z-30 ${isMenuOpen ? 'opacity-50' : 'opacity-0 pointer-events-none'}`}
             ></div>
             <div 
                 id="menu" 
@@ -70,13 +69,14 @@ export default function Menu(){
                             <div className="w-0 h-0.5 place-self-center group-hover:w-full bg-white absolute transition-all duration-300"></div>
                         </li>
                     ))}
-                    <li 
-                        className="cursor-pointer"
-                        onClick={() => handleGoToAuth()}
-                    >
-                        {user.uid ? 'Log out' : 'Sign up'}
-                    </li>
                 </ul>
+                <button 
+                    type="button"
+                    className={`mt-auto m-5 p-1.5 border-1 ${user.uid ? 'hover:bg-[rgba(245,110,117,0.6)] border-red-400' : 'hover:bg-[rgba(0,201,81,0.6)] border-green-400'} transition-colors duration-300 text-gray-300 rounded  cursor-pointer`}
+                    onClick={handleGoToAuth}
+                >
+                    {user.uid ? 'Logout' : 'Sign up'}
+                </button>
             </div>
         </>
     )
