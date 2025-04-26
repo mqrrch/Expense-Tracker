@@ -56,6 +56,7 @@ export default function TransactionsHistoryItem({ item }: ItemTypes){
                         setIsViewTransaction={setIsViewTransaction}
                         transaction={item}
                         classProp={animationClass}
+                        setAnimationClass={setAnimationClass}
                         handleCloseView={handleCloseView}
                     />
                 </>

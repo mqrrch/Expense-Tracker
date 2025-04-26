@@ -2,9 +2,10 @@ import { useNavigate, useParams } from "react-router-dom"
 import SignUp from "./SignUp";
 import Login from "./Login";
 import { GoogleAuthProvider, signInWithPopup } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../features/userSlice";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function AuthTemplate(){
     const dispatch = useDispatch();
@@ -15,17 +16,36 @@ export default function AuthTemplate(){
         try {
             const userCredential = await signInWithPopup(auth, new GoogleAuthProvider());
             const user = userCredential.user;
-            dispatch(setUser({
-                uid: user.uid,
-                displayName: user.displayName,
-                email: user.email,
-                photoUrl: user.photoURL,
-            }))
-            navigate('/')
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnapshot = await getDoc(userDocRef);
+            if (userDocSnapshot.exists()){
+                const userData = userDocSnapshot.data();
+                dispatch(setUser({
+                    uid: userData.uid,
+                    displayName: userData.displayName,
+                    email: userData.email,
+                    photoURL: userData.photoURL,
+                }));
+            } else{
+                await setDoc(userDocRef, {
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                });
+
+                dispatch(setUser({
+                    uid: user.uid,
+                    displayName: user.displayName,
+                    email: user.email,
+                    photoURL: user.photoURL,
+                }));
+            }
+            navigate('/');
         } catch(err) {
             console.log(err);
-        }
-    }
+        };
+    };
 
     return(
         <>

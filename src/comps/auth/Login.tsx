@@ -1,9 +1,10 @@
 import { useState } from "react";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { setUser } from "../../features/userSlice";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Login(){
     const [email, setEmail] = useState<string>('');
@@ -17,13 +18,18 @@ export default function Login(){
         try{
             const userCredential = await signInWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            dispatch(setUser({
-                uid: user.uid,
-                displayName: user.displayName,
-                email: user.email,
-                photoUrl: user.photoURL,
-            }));
-            navigate('/');
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnapshot = await getDoc(userDocRef);
+            if (userDocSnapshot.exists()){
+                const userData = userDocSnapshot.data();
+                dispatch(setUser({
+                    uid: userData.uid,
+                    displayName: userData.displayName,
+                    email: userData.email,
+                    photoURL: userData.photoURL,
+                }));
+                navigate('/');
+            }
         } catch(err){
             console.log(err);
         }

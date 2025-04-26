@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { useReduxSelector } from "../../hooks/useReduxSelector"
 import { useDispatch } from "react-redux";
 import { AppDispatch } from "../../store";
-import { editTransactionAsync } from "../../features/transactionsAsyncThunks";
+import { editTransactionAsync, removeTransactionAsync } from "../../features/transactionsAsyncThunks";
 import { TransactionItemTypes } from "../../features/types";
 
 interface ViewTransactionProps{
@@ -10,22 +10,26 @@ interface ViewTransactionProps{
     setIsViewTransaction: React.Dispatch<React.SetStateAction<boolean>>;
     transaction: TransactionItemTypes;
     classProp: string;
+    setAnimationClass: React.Dispatch<React.SetStateAction<string>>;
     handleCloseView: (e: React.MouseEvent) => void;
 }
 
 export default function ViewTransaction({ 
     isViewTransaction,
+    setIsViewTransaction,
     transaction, 
     classProp,
+    setAnimationClass,
     handleCloseView }: ViewTransactionProps){
     const [isEdit, setIsEdit] = useState<boolean>(false);
     const [newTransactionType, setNewTransactionType] = useState<string>(transaction.type);
     const [newTransactionName, setNewTransactionName] = useState<string>(transaction.name);
     const [newTransactionCost, setNewTransactionCost] = useState<number>(transaction.cost);
     const [newTransactionDate, setNewTransactionDate] = useState<string>(transaction.date);
+    const [newNextPaymentDate, setNewNextPaymentDate] = useState<string>(transaction.nextPaymentDate);
     const [isTimesDropdownOpen, setIsTimesDropdownOpen] = useState<boolean>(false);
     const [isCategoryDropdownOpen, setIsCategoryDropdownOpen] = useState<boolean>(false);
-    const [newSelectedTime, setNewSelectedTime] = useState<string>(transaction.time);
+    const [newSelectedFrequency, setNewSelectedFrequency] = useState<string>(transaction.frequency);
     const [newSelectedCategory, setNewSelectedCategory] = useState<string>(transaction.category);
     const timesDropdownRef = useRef<HTMLDivElement>(null);
     const categoryDropdownRef = useRef<HTMLDivElement>(null);
@@ -35,7 +39,7 @@ export default function ViewTransaction({
 
     const [disableSave, setDisableSave] = useState<boolean>(false);
 
-    const transactionTimes: string[] = [
+    const transactionFrequencies: string[] = [
         'One time',
         'Daily',
         'Weekly',
@@ -43,7 +47,7 @@ export default function ViewTransaction({
         'Yearly'
     ];
 
-    const filteredTransactionTimes: string[] = transactionTimes.filter((time) => time !== newSelectedTime);
+    const filteredTransactionFrequencies: string[] = transactionFrequencies.filter((frequency) => frequency !== newSelectedFrequency);
 
     const categoryList: string[] = [
         'Food',
@@ -66,7 +70,7 @@ export default function ViewTransaction({
         setNewTransactionCost(transaction.cost);
         setNewSelectedCategory(transaction.category);
         setNewTransactionDate(transaction.date);
-        setNewSelectedTime(transaction.time);
+        setNewSelectedFrequency(transaction.frequency);
     }, [transaction])
 
     useEffect(() => {
@@ -101,8 +105,8 @@ export default function ViewTransaction({
         };
     }, [newTransactionName, newTransactionCost, newTransactionDate]);
 
-    const handleChangeTime = (time: string) => {
-        setNewSelectedTime(time);
+    const handleChangeFrequency = (frequency: string) => {
+        setNewSelectedFrequency(frequency);
         setIsTimesDropdownOpen(false);
     }
     const handleChangeCategory = (category: string) => {
@@ -123,6 +127,9 @@ export default function ViewTransaction({
             e.preventDefault();
         };
     }
+    const handleOnBlurCost = () => {
+        if (!newTransactionCost) setNewTransactionCost(0);
+    }
 
     const handleCancel = (e: React.MouseEvent) => {
         handleCloseView(e);
@@ -133,12 +140,23 @@ export default function ViewTransaction({
         setNewTransactionCost(transaction.cost);
         setNewSelectedCategory(transaction.category);
         setNewTransactionDate(transaction.date);
-        setNewSelectedTime(transaction.time);
+        setNewSelectedFrequency(transaction.frequency);
     }
 
-    const handleRemoveOrCancel = () => {
+    const handleRemoveOrCancel = (e: React.MouseEvent) => {
         if (!isEdit){
-            return; // Dont have the code to remove transaction yet
+            try{
+                if(!transaction.id) return;
+                const transactionId = transaction.id!;
+                e.stopPropagation();
+                setAnimationClass('fade-out');
+                setTimeout(() => {
+                    dispatch(removeTransactionAsync(transactionId));
+                    setIsViewTransaction(false);
+                }, 300);
+            } catch (err){
+                console.log(err);
+            };
         } else {
             setIsEdit(false);
 
@@ -147,7 +165,7 @@ export default function ViewTransaction({
             setNewTransactionCost(transaction.cost);
             setNewSelectedCategory(transaction.category);
             setNewTransactionDate(transaction.date);
-            setNewSelectedTime(transaction.time);
+            setNewSelectedFrequency(transaction.frequency);
         }
     }
 
@@ -164,9 +182,11 @@ export default function ViewTransaction({
                     name: newTransactionName,
                     cost: newTransactionCost,
                     category: newSelectedCategory,
-                    time: newSelectedTime,
+                    frequency: newSelectedFrequency,
                     date: newTransactionDate,
+                    nextPaymentDate: '',
                 }));
+                setIsEdit(false);
             } catch (err){
                 console.error(err);
             }
@@ -282,20 +302,20 @@ export default function ViewTransaction({
                                 className={`flex justify-between items-center w-full rounded-lg p-1 px-2 pr-3 select-none border-1 border-[#222] outline-none ${!isEdit ? 'cursor-default' : 'cursor-pointer'}`}
                                 disabled={!isEdit}
                             >
-                                {newSelectedTime}
+                                {newSelectedFrequency}
                                 <div className={`border-r-2 border-b-2 p-1 ${isTimesDropdownOpen ? 'rotate-[-135deg] mb-[-3px]' : 'rotate-45 mb-[3px]'}`}></div>
                             </button>
 
                             {isTimesDropdownOpen && (
                                 <div className="absolute mt-1 w-full bg-[#191919] shadow-lg rounded-md z-[3]">
                                     <ul className="max-h-60 overflow-auto">
-                                        {filteredTransactionTimes.map((time, index) => (
+                                        {filteredTransactionFrequencies.map((frequency, index) => (
                                             <li
                                                 key={index}
-                                                onClick={() => handleChangeTime(time)}
+                                                onClick={() => handleChangeFrequency(frequency)}
                                                 className="px-4 py-1.5 cursor-pointer hover:bg-[#222] first-of-type:hover:rounded-t-md last-of-type:hover:rounded-b-md"
                                             >
-                                                {time}
+                                                {frequency}
                                             </li>
                                         ))}
                                     </ul>
@@ -303,6 +323,19 @@ export default function ViewTransaction({
                             )}
                         </div>
                     </div>
+                    <input 
+                        className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${!isEdit ? 'cursor-default' : 'cursor-text'}`}
+                        type="date"
+                        name="transaction-date"
+                        id="transaction-date"
+                        autoComplete="off"
+                        value={newTransactionDate}
+                        min="1900-01-01"
+                        max={new Date().toLocaleDateString('fr-ca')}
+                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setNewTransactionDate(e.currentTarget.value)}
+                        disabled={!isEdit}
+                        required
+                    ></input>
                     <input 
                         className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${!isEdit ? 'cursor-default' : 'cursor-text'}`}
                         type="date"

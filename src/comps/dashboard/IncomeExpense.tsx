@@ -1,4 +1,6 @@
 import { Bar, BarChart, CartesianGrid, Rectangle, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { useReduxSelector } from "../../hooks/useReduxSelector";
+import { TransactionItemTypes } from "../../features/types";
 
 interface ChartData {
     month: string;
@@ -6,27 +8,38 @@ interface ChartData {
     expense: number;
 }
 
-const data: ChartData[] = [
-    {month: 'Jan', income: 1500, expense: 200},
-    {month: 'Feb', income: 1060, expense: 40},
-    {month: 'Mar', income: 1040, expense: 900},
-    {month: 'Apr', income: 1800, expense: 1500},
-    {month: 'May', income: 1600, expense: 1240},
-    {month: 'Jun', income: 1400, expense: 680},
-    {month: 'Jul', income: 1900, expense: 780},
-    {month: 'Aug', income: 1200, expense: 620},
-    {month: 'Sep', income: 1600, expense: 430},
-    {month: 'Oct', income: 1400, expense: 610},
-    {month: 'Nov', income: 1400, expense: 680},
-    {month: 'Dec', income: 1200, expense: 600},
-]
-
-function capitalizeFirstLetter(val: string | number | undefined | null): string {
-    if (!val) return '';
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-}
-
 export default function IncomeExpense(){
+    const transactions = useReduxSelector(state => state.transactions.transactions);
+    const incomeTransactions = transactions.filter(transaction => transaction.type.toLowerCase() !== 'expense');
+    const expenseTransactions = transactions.filter(transaction => transaction.type.toLowerCase() !== 'income');
+    
+    function getTotal(transactions: TransactionItemTypes[], month: string){
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const filteredTransactions = transactions.filter(transaction => transaction.date.split('-')[0] === String(currentYear) && transaction.date.split('-')[1] === month);
+        return filteredTransactions.reduce((prevAmount, transaction) => prevAmount += transaction.cost, 0);
+    }
+
+    const data: ChartData[] = [
+        {month: 'Jan', income: getTotal(incomeTransactions, '01'), expense: getTotal(expenseTransactions, '01')},
+        {month: 'Feb', income: getTotal(incomeTransactions, '02'), expense: getTotal(expenseTransactions, '02')},
+        {month: 'Mar', income: getTotal(incomeTransactions, '03'), expense: getTotal(expenseTransactions, '03')},
+        {month: 'Apr', income: getTotal(incomeTransactions, '04'), expense: getTotal(expenseTransactions, '04')},
+        {month: 'May', income: getTotal(incomeTransactions, '05'), expense: getTotal(expenseTransactions, '05')},
+        {month: 'Jun', income: getTotal(incomeTransactions, '06'), expense: getTotal(expenseTransactions, '06')},
+        {month: 'Jul', income: getTotal(incomeTransactions, '07'), expense: getTotal(expenseTransactions, '07')},
+        {month: 'Aug', income: getTotal(incomeTransactions, '08'), expense: getTotal(expenseTransactions, '08')},
+        {month: 'Sep', income: getTotal(incomeTransactions, '09'), expense: getTotal(expenseTransactions, '09')},
+        {month: 'Oct', income: getTotal(incomeTransactions, '10'), expense: getTotal(expenseTransactions, '10')},
+        {month: 'Nov', income: getTotal(incomeTransactions, '11'), expense: getTotal(expenseTransactions, '11')},
+        {month: 'Dec', income: getTotal(incomeTransactions, '12'), expense: getTotal(expenseTransactions, '12')},
+    ]
+    
+    function capitalizeFirstLetter(val: string | number | undefined | null): string {
+        if (!val) return '';
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+
     return(
         <div className='w-full bg-[#191919] rounded-xl shadow-2xl border-1 border-[#4a4a4a] mt-4'>
             <p className="text-gray-300 px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Income - Expense</p>

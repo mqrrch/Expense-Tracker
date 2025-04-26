@@ -1,9 +1,10 @@
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { useState } from "react"
-import { auth } from "../../firebase";
+import { auth, db } from "../../firebase";
 import { useDispatch } from "react-redux";
 import { setUser } from "../../features/userSlice";
 import { useNavigate } from "react-router-dom";
+import { doc, getDoc, setDoc } from "firebase/firestore";
 
 export default function SignUp(){
     const [email, setEmail] = useState<string>('');
@@ -18,17 +19,33 @@ export default function SignUp(){
         try{
             const userCredential = await createUserWithEmailAndPassword(auth, email, password);
             const user = userCredential.user;
-            dispatch(setUser({
-                uid: user.uid,
-                displayName: displayName,
-                email: user.email,
-                photoUrl: user.photoURL,
-            }));
-            navigate('/');
+
+            const userDocRef = doc(db, 'users', user.uid);
+            const userDocSnapshot = await getDoc(userDocRef);
+            if (!userDocSnapshot.exists()){
+                try{
+                    await setDoc(userDocRef, {
+                        uid: user.uid,
+                        displayName: displayName,
+                        email: user.email,
+                        photoURL: 'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg',
+                    });
+                    
+                    dispatch(setUser({
+                        uid: user.uid,
+                        displayName: displayName,
+                        email: user.email,
+                        photoURL: 'https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg',
+                    }));
+                    navigate('/');
+                } catch(err){
+                    console.log(err);
+                };
+            };
         } catch(err){
             console.log(err);
-        }
-    }
+        };
+    };
 
     return (
         <form

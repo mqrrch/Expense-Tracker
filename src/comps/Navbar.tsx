@@ -65,7 +65,7 @@ export default function Navbar(){
             {user.uid ? (
                 <div className="relative w-9 mr-5">
                     <img 
-                        src="https://www.shutterstock.com/image-vector/blank-avatar-photo-place-holder-600nw-1095249842.jpg" 
+                        src={user.photoURL} 
                         className="rounded-full w-full h-auto cursor-pointer"
                         ref={imageRef}
                         onClick={() => setIsModalOpen(!isModalOpen)}
@@ -80,7 +80,7 @@ export default function Navbar(){
                         </div>
                     )}
                     {isSettingsOpen && (
-                        <SettingsPage setIsSettingsOpen={setIsSettingsOpen} />
+                        <SettingsPage isSettingsOpen={isSettingsOpen} setIsSettingsOpen={setIsSettingsOpen} />
                     )}
                 </div>
             ) : (

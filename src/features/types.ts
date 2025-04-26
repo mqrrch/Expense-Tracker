@@ -2,7 +2,7 @@ export interface UserTypes{
     uid: string;
     displayName: string;
     email: string;
-    photoUrl: string;
+    photoURL: string;
 }
 
 export interface LoadingTypes{
@@ -15,6 +15,7 @@ export interface TransactionItemTypes{
     name: string;
     cost: number;
     category: string;
-    time: string;
+    frequency: string;
     date: string;
+    nextPaymentDate: string;
 }

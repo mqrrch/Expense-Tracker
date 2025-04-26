@@ -1,31 +1,43 @@
-import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts"
+import { CartesianGrid, Line, LineChart, ResponsiveContainer, Tooltip, XAxis } from "recharts";
+import { useReduxSelector } from "../../hooks/useReduxSelector";
 
 interface ChartData {
     month: string;
     value: number;
 }
 
-const data: ChartData[] = [
-    {month: 'Jan', value: 100},
-    {month: 'Feb', value: 100},
-    {month: 'Mar', value: 100},
-    {month: 'Apr', value: 100},
-    {month: 'May', value: 100},
-    {month: 'Jun', value: 100},
-    {month: 'Jul', value: 100},
-    {month: 'Aug', value: 100},
-    {month: 'Sep', value: 100},
-    {month: 'Oct', value: 100},
-    {month: 'Nov', value: 100},
-    {month: 'Dec', value: 100},
-]
-
-function capitalizeFirstLetter(val: string | number | undefined | null): string {
-    if (!val) return '';
-    return String(val).charAt(0).toUpperCase() + String(val).slice(1);
-}
-
 export default function Balance(){
+    const transactions = useReduxSelector(state => state.transactions.transactions);
+    
+    function getBalance(month: string){
+        const currentDate = new Date();
+        const currentYear = currentDate.getFullYear();
+        const filteredTransactions = transactions.filter(transaction => transaction.date.split('-')[0] === String(currentYear) && transaction.date.split('-')[1] === month);
+        const incomeCost = filteredTransactions.filter(transaction => transaction.type.toLowerCase() !== 'expense').reduce((prevAmount, transaction) => prevAmount += transaction.cost, 0);
+        const expenseCost = filteredTransactions.filter(transaction => transaction.type.toLowerCase() !== 'income').reduce((prevAmount, transaction) => prevAmount += transaction.cost, 0);
+        return incomeCost - expenseCost;
+    }
+
+    const data: ChartData[] = [
+        {month: 'Jan', value: getBalance('01')},
+        {month: 'Feb', value: getBalance('02')},
+        {month: 'Mar', value: getBalance('03')},
+        {month: 'Apr', value: getBalance('04')},
+        {month: 'May', value: getBalance('05')},
+        {month: 'Jun', value: getBalance('06')},
+        {month: 'Jul', value: getBalance('07')},
+        {month: 'Aug', value: getBalance('08')},
+        {month: 'Sep', value: getBalance('09')},
+        {month: 'Oct', value: getBalance('10')},
+        {month: 'Nov', value: getBalance('11')},
+        {month: 'Dec', value: getBalance('12')},
+    ]
+    
+    function capitalizeFirstLetter(val: string | number | undefined | null): string {
+        if (!val) return '';
+        return String(val).charAt(0).toUpperCase() + String(val).slice(1);
+    }
+
     return (
         <div className='w-full bg-[#191919] rounded-xl shadow-2xl border-1 border-[#4a4a4a] mt-4'>
             <p className="text-gray-300 px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Balance</p>

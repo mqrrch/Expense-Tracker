@@ -46,8 +46,9 @@ export const editTransactionAsync = createAsyncThunk<
                 name: itemData.name,
                 cost: itemData.cost,
                 category: itemData.category,
-                time: itemData.time,
+                frequency: itemData.frequency,
                 date: itemData.date,
+                nextPaymentDate: itemData.nextPaymentDate,
              });
             return { id: transactionId, ...itemData };
         } catch(err){
@@ -57,15 +58,22 @@ export const editTransactionAsync = createAsyncThunk<
     }
 )
 
-// export const removeExpenseItemAsync = createAsyncThunk(
-//     'expenses/removeExpenseItemAsync',
-//     async (itemData, { rejectWithValue }) => {
-//         try {
-//             await deleteDoc(doc(db, 'expenses', itemData.id));
-//             return itemData.id;
-//         } catch(err){
-//             console.log(err);
-//             return rejectWithValue(err);
-//         }
-//     }
-// )
+export const removeTransactionAsync = createAsyncThunk<
+    string,
+    string,
+    { state: RootState }
+>(
+    'transactions/removeTransactionAsync',
+    async (itemId, { getState, rejectWithValue }) => {
+        const uid = getState().user.uid;
+        try {
+            const userTransactionsRef = collection(doc(db, 'users', uid), 'transactions');
+            const transactionRef = doc(userTransactionsRef, itemId)
+            await deleteDoc(transactionRef);
+            return itemId;
+        } catch(err){
+            console.log(err);
+            return rejectWithValue(err);
+        }
+    }
+)

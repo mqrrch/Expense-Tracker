@@ -1,10 +1,11 @@
 import { createSlice } from "@reduxjs/toolkit"
+import { UserTypes } from "./types";
 
-const initialState = {
+const initialState: UserTypes = {
     uid: '',
     displayName: '',
     email: '',
-    photoUrl: '',
+    photoURL: '',
 }
 
 export const userSlice = createSlice({
@@ -15,13 +16,13 @@ export const userSlice = createSlice({
             state.uid = action.payload.uid;
             state.displayName = action.payload.displayName;
             state.email = action.payload.email;
-            state.photoUrl = action.payload.photoUrl;
+            state.photoURL = action.payload.photoURL;
         },
         clearUser: (state) => {
             state.uid = '';
             state.displayName = '';
             state.email = '';
-            state.photoUrl = '';
+            state.photoURL = '';
         },
     }
 })
