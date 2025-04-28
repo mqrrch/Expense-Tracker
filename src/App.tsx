@@ -49,7 +49,9 @@ export default function App() {
 
   return (
     <>
-      <div className={`fixed w-full h-screen top-0 left-0 bg-black z-[200] ${isLoading ? 'visible' : 'hidden'}`}></div>
+      <div className={`fixed flex justify-center items-center w-full h-screen top-0 left-0 bg-black z-[200] ${isLoading ? 'visible' : 'hidden'}`}>
+        <div className="loader"></div>
+      </div>
       <Routes>
         <Route path="/:authType" element={<AuthTemplate />}></Route>
 
