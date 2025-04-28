@@ -55,7 +55,7 @@ export default function Summary(){
     ]
 
     return (
-        <div className='w-full bg-[#191919] rounded-xl shadow-2xl border-1 border-[#4a4a4a] mt-4'>
+        <div className='w-full bg-[#191919] rounded-xl shadow-2xl border-1 border-[#4a4a4a]'>
             <p className="text-gray-300 px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Summary</p>
             <div className='w-full h-[16rem] flex justify-center items-center'>
                 {expenseTransactions.length === 0 ? (

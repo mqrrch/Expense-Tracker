@@ -11,7 +11,7 @@ export default function MainLayout(){
 
     useFirestoreQuery({
         collectionName: 'transactions',
-        conditions: [orderBy('date', 'asc')],
+        conditions: [orderBy('date', 'desc')],
         onDataReceived: (docs) => {
             const transactionItems = docs.map((doc) => ({ ...doc.data(), id: doc.id }))
             dispatch(setTransactions(transactionItems));
@@ -26,7 +26,7 @@ export default function MainLayout(){
         <>
             <div className="fixed top-0 left-0 w-full h-screen bg-[#111] z-[-2]"></div>
             <Navbar />
-            <div className="p-4 pt-14 overflow-hidden">
+            <div className="p-4 pt-14 overflow-hidden mx-auto max-w-[800px]">
                 <Outlet />
             </div>
         </>

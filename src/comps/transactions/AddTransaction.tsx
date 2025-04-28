@@ -1,11 +1,13 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import { useDispatch } from "react-redux";
 import { addTransactionAsync } from "../../features/transactionsAsyncThunks";
 import { AppDispatch } from "../../store";
 import { useReduxSelector } from "../../hooks/useReduxSelector";
+import { useNavigate } from "react-router-dom";
 
 
 export default function AddTransaction(){
+    const user = useReduxSelector(state => state.user);
     const [transactionType, setTransactionType] = useState<string>('Income');
     const [transactionName, setTransactionName] = useState<string>('');
     const [transactionCost, setTransactionCost] = useState<number>(0);
@@ -16,9 +18,11 @@ export default function AddTransaction(){
     const [selectedFrequency, setSelectedFrequency] = useState<string>('One time');
     const [selectedCategory, setSelectedCategory] = useState<string>('Others');
     const isLoading = useReduxSelector(state => state.transactions.loading);
+    const [noAccount, setNoAccount] = useState<boolean>(true);
     const frequencyDropdownRef = useRef<HTMLDivElement>(null);
     const categoryDropdownRef = useRef<HTMLDivElement>(null);
     const dispatch = useDispatch<AppDispatch>();
+    const navigate = useNavigate();
 
     const transactionFrequencies: string[] = [
         'One time',
@@ -64,6 +68,14 @@ export default function AddTransaction(){
         return () => document.removeEventListener('mousedown', listener);
     }, [isFrequenciesDropdownOpen, isCategoryDropdownOpen]);
 
+    useMemo(() => {
+        if (!user.uid){
+            setNoAccount(true);
+        } else{
+            setNoAccount(false);
+        }
+    }, [user])
+
     const handleChangeFrequency = (frequency: string) => {
         setSelectedFrequency(frequency);
         setIsFrequenciesDropdownOpen(false);
@@ -94,6 +106,7 @@ export default function AddTransaction(){
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
+        if (!user.uid) return;
         try{
             await dispatch(addTransactionAsync({
                 type: transactionType,
@@ -122,13 +135,26 @@ export default function AddTransaction(){
             <p className="px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Add Transaction</p>
             <form 
                 onSubmit={handleSubmit}
-                className={`p-3 flex flex-col gap-2 ${isLoading && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
+                className={`p-3 relative flex flex-col gap-2 ${isLoading && 'opacity-50 cursor-not-allowed pointer-events-none'}`}
             >
+                {noAccount && (
+                    <div className="absolute top-0 left-0 flex flex-col justify-center items-center w-full h-full bg-[rgba(0,0,0,0.9)] rounded-xl rounded-t-none gap-2 z-1">
+                        <p className="text">Please log in to add transaction</p>
+                        <button 
+                            className="rounded-lg p-1 px-8 border-1 border-green-600 hover:bg-green-600 transition-colors duration-300 cursor-pointer"
+                            onClick={() => navigate('/register')}
+                        >
+                            Log in
+                        </button>
+                    </div>
+                )}
+                
                 <div className="flex w-full border-1 border-[#222] rounded-xl">
                     <button 
                         type="button"
                         onClick={() => setTransactionType('Income')}
                         className={`flex-1 p-1 cursor-pointer rounded-xl rounded-r-none transition-colors duration-300 ${transactionType === 'Income' && 'bg-linear-to-r from-[#3a3a3a] to-[#4b4b4b]'}`}
+                        disabled={isLoading || noAccount}
                     >
                         Income
                     </button>
@@ -136,6 +162,7 @@ export default function AddTransaction(){
                         type="button"
                         onClick={() => setTransactionType('Expense')}
                         className={`flex-1 p-1 cursor-pointer rounded-xl rounded-l-none transition-colors duration-300 ${transactionType === 'Expense' && 'bg-linear-to-l from-[#3a3a3a] to-[#4b4b4b]'}`}
+                        disabled={isLoading || noAccount}
                     >
                         Expense
                     </button>
@@ -151,41 +178,41 @@ export default function AddTransaction(){
                         autoComplete="off"
                         value={transactionName}
                         onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransactionName(e.currentTarget.value)}
-                        disabled={isLoading}
+                        disabled={isLoading || noAccount}
                         required
                     ></input>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="transaction-cost">
-                        Cost
-                    </label>
-                    <div className="relative">
-                        <input 
-                            className={`w-full px-2 p-1 pr-8 rounded-lg border-1 border-[#222] outline-none ${isLoading && 'cursor-not-allowed'}`}
-                            type="number"
-                            name="transaction-cost"
-                            id="transaction-cost"
-                            placeholder="Cost"
-                            autoComplete="off"
-                            value={transactionCost.toString()}
-                            min={1}
-                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCost(e)}
-                            onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleOnKeyDownCost(e)}
-                            onBlur={handleOnBlurCost}
-                            disabled={isLoading}
-                            required
-                        ></input>
-                        <label 
-                            htmlFor="transaction-cost" 
-                            className="absolute top-[4.5px] right-3 text-[#888]"
-                        >
-                            $
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col gap-1 w-full">
+                        <label htmlFor="transaction-cost">
+                            Cost
                         </label>
+                        <div className="relative">
+                            <input 
+                                className={`w-full px-2 p-1 pr-8 rounded-lg border-1 border-[#222] outline-none ${isLoading && 'cursor-not-allowed'}`}
+                                type="number"
+                                name="transaction-cost"
+                                id="transaction-cost"
+                                placeholder="Cost"
+                                autoComplete="off"
+                                value={transactionCost.toString()}
+                                min={1}
+                                onChange={(e: React.ChangeEvent<HTMLInputElement>) => handleChangeCost(e)}
+                                onKeyDown={(e: React.KeyboardEvent<HTMLInputElement>) => handleOnKeyDownCost(e)}
+                                onBlur={handleOnBlurCost}
+                                disabled={isLoading || noAccount}
+                                required
+                            ></input>
+                            <label 
+                                htmlFor="transaction-cost" 
+                                className="absolute top-[4.5px] right-3 text-[#888]"
+                            >
+                                $
+                            </label>
+                        </div>
                     </div>
-                </div>
 
-                <div className="flex flex-col gap-2">
                     {/* Custom category dropdown */}
                     <div className="relative rounded-lg mx-auto select-none w-full" ref={categoryDropdownRef}>
                         <p className="mb-1">Category</p>
@@ -193,7 +220,7 @@ export default function AddTransaction(){
                             type="button"
                             onClick={() => setIsCategoryDropdownOpen(!isCategoryDropdownOpen)}
                             className={`flex justify-between items-center w-full rounded-lg p-1 px-2 pr-3 select-none border-1 border-[#222] outline-none ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                            disabled={isLoading}
+                            disabled={isLoading || noAccount}
                         >
                             {selectedCategory}
                             <div className={`border-r-2 border-b-2 p-1 ${isCategoryDropdownOpen ? 'rotate-[-135deg] mb-[-3px]' : 'rotate-45 mb-[3px]'}`}></div>
@@ -215,8 +242,27 @@ export default function AddTransaction(){
                             </div>
                         )}
                     </div>
+                </div>
 
-                    {/* Custom times dropdown */}
+                <div className="flex flex-col sm:flex-row gap-2">
+                    <div className="flex flex-col gap-1 w-full">
+                        <label htmlFor="transaction-date">Date</label>
+                        <input 
+                            className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
+                            type="date"
+                            name="transaction-date"
+                            id="transaction-date"
+                            autoComplete="off"
+                            min="1900-01-01"
+                            max={new Date().toLocaleDateString('fr-ca')}
+                            value={transactionDate}
+                            onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransactionDate(e.currentTarget.value)}
+                            disabled={isLoading || noAccount}
+                            required
+                        ></input>
+                    </div>
+
+                    {/* Custom frequency dropdown */}
                     <div className="relative rounded-lg mx-auto select-none w-full" ref={frequencyDropdownRef}>
                         <p className="mb-1">Frequency</p>
                         <button
@@ -248,32 +294,17 @@ export default function AddTransaction(){
                     </div>
                 </div>
 
-                <div className="flex flex-col gap-1">
-                    <label htmlFor="transaction-date">Date</label>
-                    <input 
-                        className={`px-2 p-1 rounded-lg border-1 border-[#222] outline-none ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                        type="date"
-                        name="transaction-date"
-                        id="transaction-date"
-                        autoComplete="off"
-                        min="1900-01-01"
-                        max={new Date().toLocaleDateString('fr-ca')}
-                        value={transactionDate}
-                        onChange={(e: React.ChangeEvent<HTMLInputElement>) => setTransactionDate(e.currentTarget.value)}
-                        disabled={isLoading}
-                        required
-                    ></input>
-                </div>
                 {/* <NextPaymentDate 
                     isLoading={isLoading} 
                     selectedFrequency={selectedFrequency}
                     transactionNextPaymentDate={transactionNextPaymentDate}
                     setTransactionNextPaymentDate={setTransactionNextPaymentDate} 
                 /> */}
+
                 <button 
                     type="submit" 
                     className={`p-2 mt-2 border-1 border-[#4a4a4a] rounded-lg hover:bg-[#222] transition-colors duration-300 ${isLoading ? 'cursor-not-allowed' : 'cursor-pointer'}`}
-                    disabled={isLoading}
+                    disabled={isLoading || noAccount}
                 >
                     Add Transaction
                 </button>

@@ -56,7 +56,7 @@ export default function Menu(){
             <div 
                 id="menu" 
                 onClick={e => e.stopPropagation()}
-                className={`fixed top-0 left-0 h-full flex flex-col z-[40] bg-[#191919] w-[80%] max-w-[200px] md:max-w-[280px] ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
+                className={`fixed top-0 left-0 h-full flex flex-col z-[40] bg-[#191919] w-[80%] max-w-[200px] md:max-w-[220px] ${isMenuOpen ? 'translate-x-0' : '-translate-x-full'}`}
             >
                 <ul id="menu-content" className={`flex flex-col items-start gap-3 ml-5 mt-16 text-[#e6e6e6]`}>
                     {menuContent.map((content, index) => (

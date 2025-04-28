@@ -33,8 +33,10 @@ export default function DashboardPage(){
         <div>
             <p className="text-gray-300 mb-2" title="Disabled for now">Period: {monthNames[currentMonth]}, {currentYear}</p>
             <DashboardCounts />
-            <Summary />
-            <IncomeExpense />
+            <div className="flex flex-col sm:flex-row gap-4 mt-4">
+                <Summary />
+                <IncomeExpense />
+            </div>
             <Balance />
         </div>
     )

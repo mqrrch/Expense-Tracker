@@ -66,7 +66,7 @@ export default function AuthTemplate(){
                 </a>
             </nav>
             <div 
-                className="flex flex-col gap-4 m-4 mt-18 p-4 pt-2 border-1 border-[#4a4a4a] text-gray-300 rounded-lg"
+                className="flex flex-col gap-4 m-4 mt-18 p-4 pt-2 border-1 border-[#4a4a4a] text-gray-300 rounded-lg w-[90%] max-w-[400px] mx-auto"
             >
                 {authType === 'sign-up' ? <SignUp /> : <Login />}
                 <div className="flex items-center gap-2">

@@ -17,5 +17,5 @@ export interface TransactionItemTypes{
     category: string;
     frequency: string;
     date: string;
-    nextPaymentDate: string;
+    nextPaymentDate: string ;
 }

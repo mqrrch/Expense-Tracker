@@ -75,7 +75,7 @@ export default function Navbar(){
                             ref={modalRef}
                             className="absolute flex flex-col gap-2 p-3 rounded top-11 right-1 text-gray-300 bg-[#2b2b2b]"
                         >
-                            <a onClick={() => setIsSettingsOpen(true)} className="cursor-pointer">Settings</a>
+                            {/* <a onClick={() => setIsSettingsOpen(true)} className="cursor-pointer">Settings</a> */}
                             <a onClick={handleGoToAuth} className="cursor-pointer">Logout</a>
                         </div>
                     )}

@@ -14,21 +14,15 @@ const initialState: InitialState = {
     error: '',
 }
 
-// Expenses array will have this format:
-// - Type
-// - Title
-// - Cost
-// - Category
-// - Date
-// - Time
-// - Note
-
 export const transactionsSlice = createSlice({
     name: 'transactions',
     initialState,
     reducers: {
         setTransactions: (state, action) => {
             state.transactions = action.payload;
+        },
+        clearTransactions: (state) => {
+            state.transactions = [];
         }
     },
     extraReducers: (builder) => {
@@ -58,5 +52,5 @@ export const transactionsSlice = createSlice({
     }
 })
 
-export const { setTransactions } = transactionsSlice.actions;
+export const { setTransactions, clearTransactions } = transactionsSlice.actions;
 export const transactionsReducer = transactionsSlice.reducer;

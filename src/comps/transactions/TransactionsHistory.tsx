@@ -28,13 +28,13 @@ export default function TransactionsHistory(){
     }, [sortedTransactions, searchString])
 
     return (
-        <div className="w-full h-[20rem] flex flex-col rounded-xl shadow-2xl border-1 border-[#4a4a4a] text-gray-300 overflow-hidden">
+        <div className="w-full h-[24rem] flex flex-col rounded-xl shadow-2xl border-1 border-[#4a4a4a] text-gray-300 overflow-hidden">
             <p className="px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Transactions History</p>
 
             <div className="flex-1 overflow-y-scroll no-scrollbar overflow-x-hidden">
                 {/* search */}
                 <form 
-                    className="flex justify-between items-center gap-4 border-1 border-[#4a4a4a] mx-2 mb-0 mt-1.5 rounded-lg p-1 px-2 "
+                    className="flex justify-between items-center gap-4 border-1 border-[#4a4a4a] mx-2 mb-0 mt-2 rounded-lg p-1 px-2 "
                 >
                     <input 
                         id="search-transaction" 

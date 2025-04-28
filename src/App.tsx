@@ -8,60 +8,56 @@ import { useEffect } from "react";
 import { onAuthStateChanged } from "firebase/auth";
 import { auth, db } from "./firebase";
 import { setUser, clearUser } from "./features/userSlice";
-import { doc, getDoc, setDoc } from "firebase/firestore";
 import TransactionsPage from "./comps/transactions/TransactionsPage";
 import { AppDispatch } from "./store";
+import { useReduxSelector } from "./hooks/useReduxSelector";
+import { clearTransactions } from "./features/transactionsSlice";
+import { endLoading, startLoading } from "./features/loadingSlice";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function App() {
   const dispatch = useDispatch<AppDispatch>();
+  const isLoading = useReduxSelector(state => state.loading.loadingCounter);
 
   // Listen for changes in user auth
   useEffect(() => {
+    dispatch(startLoading());
     // Register auth state listener
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       // Update state with user or null if logged out
       if (user) {
-        const serializableUser = {
-            uid: user.uid,
-            displayName: user.displayName,
-            email: user.email,
-            phoneNumber: user.phoneNumber,
-            photoURL: user.photoURL,
-        };
-        
         const userDocRef = doc(db, 'users', user.uid);
         const userDocSnapshot = await getDoc(userDocRef);
-
-        if (!userDocSnapshot.exists()){
-          try{
-            await setDoc(userDocRef, {
-              displayName: user.displayName,
-              email: user.email,
-              phoneNumber: user.phoneNumber,
-              photoURL: user.photoURL,
-            });
-          } catch (err){
-            console.error(err);
-          }
+        if(userDocSnapshot.exists()){
+          const userData = userDocSnapshot.data();
+          dispatch(setUser({
+            uid: userData.uid,
+            displayName: userData.displayName,
+            email: userData.email,
+            photoURL: userData.photoURL,
+          }));
         }
-
-        dispatch(setUser(serializableUser));
       } else{
         dispatch(clearUser());
+        dispatch(clearTransactions());
       };
+      dispatch(endLoading());
     });
     // Cleanup (remove the listener when component unmounts)
     return unsubscribe;
   }, [dispatch]);
 
   return (
-    <Routes>
-      <Route path="/:authType" element={<AuthTemplate />}></Route>
+    <>
+      <div className={`fixed w-full h-screen top-0 left-0 bg-black z-[200] ${isLoading ? 'visible' : 'hidden'}`}></div>
+      <Routes>
+        <Route path="/:authType" element={<AuthTemplate />}></Route>
 
-      <Route path='/' element={<MainLayout />}>
-        <Route index element={<DashboardPage />}></Route>
-        <Route path='/transactions' element={<TransactionsPage />}></Route>
-      </Route>
-    </Routes>
+        <Route path='/' element={<MainLayout />}>
+          <Route index element={<DashboardPage />}></Route>
+          <Route path='/transactions' element={<TransactionsPage />}></Route>
+        </Route>
+      </Routes>
+    </>
   )
 }
