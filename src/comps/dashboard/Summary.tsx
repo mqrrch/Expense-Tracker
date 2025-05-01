@@ -11,20 +11,23 @@ export default function Summary(){
     const transactions = useReduxSelector(state => state.transactions.transactions);
     const expenseTransactions = transactions.filter(transaction => transaction.type.toLowerCase() !== 'income');
     const navigate = useNavigate();
+
+    const currentDate = new Date();
+    const currentYear = currentDate.getFullYear();
+    const currentMonth = currentDate.getMonth() + 1;
+    function formatMonth(month: number): string{
+        if (!month) return '';
+        if (String(month).length === 1){
+            return `0${month}`;
+        } else{
+            return String(month);
+        };
+    };
+
+    const currentMonthExpenses = expenseTransactions.filter(transaction => transaction.date.split('-')[1] === formatMonth(currentMonth))
     
     function getCategoryCost(category: string){
-        const currentDate = new Date();
-        const currentYear = currentDate.getFullYear();
-        const currentMonth = currentDate.getMonth() + 1;
-        function formatMonth(month: number): string{
-            if (!month) return '';
-            if (String(month).length === 1){
-                return `0${month}`;
-            } else{
-                return String(month);
-            };
-        };
-        const filteredTransactions = expenseTransactions.filter(transaction => transaction.date.split('-')[0] === String(currentYear) && transaction.date.split('-')[1] === formatMonth(currentMonth) && transaction.category === category);
+        const filteredTransactions = currentMonthExpenses.filter(transaction => transaction.date.split('-')[0] === String(currentYear) && transaction.category === category);
         return filteredTransactions.reduce((prevAmount, transaction) => prevAmount += transaction.cost, 0)
     }
 
@@ -58,7 +61,7 @@ export default function Summary(){
         <div className='w-full bg-[#191919] rounded-xl shadow-2xl border-1 border-[#4a4a4a]'>
             <p className="text-gray-300 px-3 py-1.5 border-b-1 border-[#4a4a4a] font-semibold">Summary</p>
             <div className='w-full h-[16rem] flex justify-center items-center'>
-                {expenseTransactions.length === 0 ? (
+                {currentMonthExpenses.length === 0 ? (
                     <div className='text-gray-300 text-center'>
                         <p>No expenses yet</p>
                         <button 
