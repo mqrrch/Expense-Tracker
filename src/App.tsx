@@ -12,7 +12,7 @@ import TransactionsPage from "./comps/transactions/TransactionsPage";
 import { AppDispatch } from "./store";
 import { useReduxSelector } from "./hooks/useReduxSelector";
 import { clearTransactions } from "./features/transactionsSlice";
-import { endLoading, startLoading } from "./features/loadingSlice";
+import { endLoading } from "./features/loadingSlice";
 import { doc, getDoc } from "firebase/firestore";
 
 export default function App() {
@@ -21,7 +21,6 @@ export default function App() {
 
   // Listen for changes in user auth
   useEffect(() => {
-    dispatch(startLoading());
     // Register auth state listener
     const unsubscribe = onAuthStateChanged(auth, async (user) => {
       // Update state with user or null if logged out

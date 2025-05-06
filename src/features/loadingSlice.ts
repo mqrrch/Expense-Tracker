@@ -1,7 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit"
 
 const initialState: { loadingCounter: number } = {
-    loadingCounter: 0
+    loadingCounter: 1
 }
 
 export const loadingSlice = createSlice({
